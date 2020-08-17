@@ -1,0 +1,37 @@
+#!/bin/bash
+echo '########################'
+echo '## Welcome to chunkIt ##'
+echo '########################'
+echo which file shall be chunked?
+read fileName
+if [ ! -f $fileName ]; then
+    echo "File not found!"
+    exit 1
+fi
+echo in how many parts?
+read fileParts
+if [[ $fileParts = *[!0-9]* ]] || [[ $fileParts = '' ]]; then
+	echo wrong number format
+	exit 1
+fi
+
+plainFileName=$(echo $fileName | cut -d'.' -f1)
+fileType=$(echo $fileName | cut -d'.' -f2)
+
+
+header=$(head -n1 $fileName)
+lineCount=$(wc -l < $fileName)
+chunkSize=$((lineCount/fileParts))
+counter=0
+echo $header
+echo $lineCount
+echo $chunkSize
+for((i=2; i<$lineCount; i+=chunkSize))
+do
+   end=$((i+$chunkSize))
+   ((counter++))
+   chunkedFileName=$plainFileName"_"$counter"."$fileType
+   echo $chunkedFileName created!
+   echo $header > $chunkedFileName
+   $(sed $i,$end!d $fileName >> $chunkedFileName)
+done

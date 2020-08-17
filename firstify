@@ -1,0 +1,22 @@
+#!/bin/bash
+echo '#########################'
+echo '## Welcome to firstify ##'
+echo '#########################'
+echo first lines from which file?
+read fileName
+if [ ! -f $fileName ]; then
+    echo "File not found!"
+    exit 1
+fi
+echo how many rows?
+read rows
+if [[ $rows = *[!0-9]* ]] || [[ $rows = '' ]]; then
+	echo wrong number format
+	exit 1
+fi
+
+plainFileName=$(echo $fileName | cut -d'.' -f1)
+fileType=$(echo $fileName | cut -d'.' -f2)
+
+newFileName=$plainFileName"_first_"$rows"_rows."$fileType
+$(head -n$rows $fileName > $newFileName)
